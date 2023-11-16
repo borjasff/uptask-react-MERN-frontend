@@ -48,19 +48,34 @@ export default function Register() {
               msg: "",
               error: false})
           }, 4000);
+          return
       }
       setAlert({});
       //create user in api
-
       try {
-          const answer = await axios.post('http://localhost:4000/api/users', {name, email, password})
+        //TODO: MOVE TO client axios
+        const {data} = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {name, email, password})
 
-          console.log(answer)
+        setAlert({
+          msg: data.msg,
+          error: false
+        })
+        
+        setName("");
+        setEmail("");
+        setPassword("");
+        setRepeatPassword("");
       } catch (error) {
-        console.log(error)
+        setAlert({
+          msg: error.response.data.msg,
+          error: true
+          })
       }
-    }
-  const { msg} = alert
+      
+
+  }
+      
+  const { msg} = alert;
   return (
     <>
     <h1 className="text-sky-600 font-black text-6xl capitalize">Register an account and manage you {''}<span className="text-slate-700">proyects</span> </h1>
