@@ -8,7 +8,8 @@ import ConfirmCount from './pages/ConfirmCount'
 import Proyects from './pages/Proyects'
 import NewProyect from './pages/NewProyect'
 import ProtectedRoute from './layouts/protectedRoute'
-
+import Proyect from './pages/Proyect'
+import EditProyect from './pages/EditProyect'
 import { AuthProvider } from './context/AuthProvider'
 import { ProyectProvider } from './context/ProyectProvider'
 
@@ -31,6 +32,8 @@ function App() {
                 <Route path='/proyects' element={<ProtectedRoute/>}>
                     <Route index element={<Proyects/>} />
                     <Route path="create-proyect" element={<NewProyect/>} />
+                    <Route path=":id" element={<Proyect/>} />
+                    <Route path="edit/:id" element={<EditProyect/>} />
                 </Route>
 
               </Routes>

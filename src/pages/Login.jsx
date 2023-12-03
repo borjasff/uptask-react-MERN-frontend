@@ -12,7 +12,8 @@ export default function Login() {
 
   const { setAuth } = useAuth();
 
-
+  // Navigate
+  const navigate = useNavigate()
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -29,6 +30,7 @@ export default function Login() {
       setAlert({})
       localStorage.setItem('token', data.token)
       setAuth(data);
+      navigate("/proyects")
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
