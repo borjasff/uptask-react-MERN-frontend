@@ -12,6 +12,7 @@ import Proyect from './pages/Proyect'
 import EditProyect from './pages/EditProyect'
 import { AuthProvider } from './context/AuthProvider'
 import { ProyectProvider } from './context/ProyectProvider'
+import NewCollaborator from './pages/NewCollaborator'
 
 function App() {
   
@@ -32,6 +33,7 @@ function App() {
                 <Route path='/proyects' element={<ProtectedRoute/>}>
                     <Route index element={<Proyects/>} />
                     <Route path="create-proyect" element={<NewProyect/>} />
+                    <Route path="new-collaborator/:id" element={<NewCollaborator/>} />
                     <Route path=":id" element={<Proyect/>} />
                     <Route path="edit/:id" element={<EditProyect/>} />
                 </Route>

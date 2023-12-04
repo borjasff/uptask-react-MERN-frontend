@@ -5,6 +5,8 @@ import ModalForm from "../components/ModalForm";
 import Task from "../components/Task";
 import ModalDeleteTask from "../components/modalDeleteTask";
 import Alert from "../components/Alert";
+import Collaborator from "../components/Collaborator";
+import ModalDeleteCollaborator from "../components/ModalDeleteCollaborator";
 
 const Proyect = () => {
     const params = useParams();
@@ -77,8 +79,29 @@ const Proyect = () => {
                         : <p className="text-center my-5 p-10">Dont has Task in this proyect</p>}
 
                 </div>
+                <div className="flex items-center justify-between mt-10">
+                    <p className="font-bold text-xl">Collaborators</p>
+                    <Link to={`/proyects/new-collaborator/${proyect._id}`}
+                            className="text-gray-400 hover:text-black uppercase font-bold"
+                    >Add</Link>
+
+                </div>
+
+                <div className="bg-white shadow rounded-lg mt-10">
+                    {proyect.collaborators?.length ?
+                        proyect.collaborators?.map( collaborator => (
+                            <Collaborator
+                                key={collaborator._id}
+                                collaborator={collaborator}
+                            />
+                            ))
+                        : <p className="text-center my-5 p-10">Dont has Collaborators in this proyect</p>}
+
+                </div>
+                
                 <ModalForm />
                 <ModalDeleteTask/>
+                <ModalDeleteCollaborator/>
         </>
     )
   )
