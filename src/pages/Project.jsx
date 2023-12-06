@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import useProjects from "../hooks/useProjects";
 import ModalForm from "../components/ModalForm";
 import Task from "../components/Task";
-import ModalDeleteTask from "../components/modalDeleteTask";
+import ModalDeleteTask from "../components/ModalDeleteTask";
 import Alert from "../components/Alert";
 import Collaborator from "../components/Collaborator";
 import ModalDeleteCollaborator from "../components/ModalDeleteCollaborator";
