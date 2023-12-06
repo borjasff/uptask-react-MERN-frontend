@@ -1,23 +1,23 @@
-import useProyects from "../hooks/useProyects"
+import useProjects from "../hooks/useProjects"
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import FormProyect from "../components/FormProyect";
+import FormProject from "../components/FormProject";
 
-const EditProyect = () => {
+const EditProject = () => {
     const params = useParams();
 
-    const { getProyect, proyect, load, deleteProyect } = useProyects()
+    const { getProject, project, load, deleteProject } = useProjects()
 
     useEffect(() =>{
-        getProyect(params.id)
+        getProject(params.id)
     }, [])
     const handleClick = () => {
-        if(confirm("Are you sure you want to delete this proyect?")){
-            deleteProyect(params.id)
+        if(confirm("Are you sure you want to delete this project?")){
+            deleteProject(params.id)
         }
 
     }
-    const { name} = proyect
+    const { name} = project
     return (
     load ? 
                 //style to load page while wait loading content
@@ -40,7 +40,7 @@ const EditProyect = () => {
         <>
             
             <div className="flex justify-between">
-                <h1 className="font-black text-4xl">Edit Proyect: {name}</h1>
+                <h1 className="font-black text-4xl">Edit Project: {name}</h1>
                 <div className="flex items-center gap-2 text-gray-400 hover:text-black">
                     <button onClick={handleClick}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -50,11 +50,11 @@ const EditProyect = () => {
                 </div>
             </div>
             <div className='mt-10 flex justify-center'>
-            <FormProyect/>
+            <FormProject/>
         </div>
         </>
             
   )
 }
 
-export default EditProyect
+export default EditProject

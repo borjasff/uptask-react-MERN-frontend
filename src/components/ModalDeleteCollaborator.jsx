@@ -1,11 +1,11 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import useProyects from '../hooks/useProyects'
+import useProjects from '../hooks/useProjects'
 
 
 const ModalDeleteCollaborator = () => {
  
-    const { handleModalDeleteCollaborator, modalDeleteCollaborator, deleteCollaborator } = useProyects()
+    const { handleModalDeleteCollaborator, modalDeleteCollaborator, deleteCollaborator } = useProjects()
 
     return (
         <Transition.Root show={ modalDeleteCollaborator } as={Fragment}>

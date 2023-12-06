@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import useProyects from '../hooks/useProyects'
+import useProjects from '../hooks/useProjects'
 import Alert from './Alert'
 import { useParams } from 'react-router-dom'
 
@@ -15,7 +15,7 @@ const ModalFormTarea = () => {
  
     const params = useParams()
 
-    const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } =useProyects();
+    const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } =useProjects();
 
     useEffect(() => {
         if(task._id){
@@ -45,7 +45,7 @@ const ModalFormTarea = () => {
             }, 4000)
             return
         }
-       await submitTask({id, name, description, entryDate, priority, proyect: params.id})
+       await submitTask({id, name, description, entryDate, priority, project: params.id})
        
        setId("")
        setName("")

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom';
-import useProyects from '../hooks/useProyects';
+import useProjects from '../hooks/useProjects';
 import Alert from './Alert';
 
-const FormProyect = () => {
+const FormProject = () => {
     const [id, setId] = useState(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -11,15 +11,15 @@ const FormProyect = () => {
     const [client, setClient] = useState("");
 
     const params = useParams()
-    const {showAlert, alert, submitProyect, proyect} = useProyects()
+    const {showAlert, alert, submitProject, project} = useProjects()
 
     useEffect(() => {
         if(params.id){
-            setId(proyect._id)
-            setName(proyect.name)
-            setDescription(proyect.description)
-            setEntryDate(proyect.entryDate?.split('T')[0])
-            setClient(proyect.client)
+            setId(project._id)
+            setName(project.name)
+            setDescription(project.description)
+            setEntryDate(project.entryDate?.split('T')[0])
+            setClient(project.client)
 
 
         }
@@ -36,7 +36,7 @@ const FormProyect = () => {
             return
         }
         //send data to provider
-       await submitProyect({id, name, description, entryDate, client})
+       await submitProject({id, name, description, entryDate, client})
 
        setId(null)
        setName("")
@@ -51,15 +51,15 @@ const FormProyect = () => {
             onSubmit={handleSubmit}>
                 {msg && <Alert alert={alert}/>}
         <div className='mb-5'>
-            <label htmlFor="name" className='text-gray-700 uppercase font-bold text-sm'>Proyect Name</label>
-            <input id="name" type="text" className='border w-full p-2 mt-2 placeholder-gray-400 rounded-md' placeholder='Proyect Name'
+            <label htmlFor="name" className='text-gray-700 uppercase font-bold text-sm'>Project Name</label>
+            <input id="name" type="text" className='border w-full p-2 mt-2 placeholder-gray-400 rounded-md' placeholder='Project Name'
             value={name}
                     onChange={ e => setName(e.target.value)}/>
         
         </div>
         <div className='mb-5'>
             <label htmlFor="description" className='text-gray-700 uppercase font-bold text-sm'>Description</label>
-            <input id="description" type="text" className='border w-full p-2 mt-2 placeholder-gray-400 rounded-md' placeholder='Proyect Description'
+            <input id="description" type="text" className='border w-full p-2 mt-2 placeholder-gray-400 rounded-md' placeholder='Project Description'
                     value={description}
                     onChange={ e => setDescription(e.target.value)}/>
         
@@ -78,9 +78,9 @@ const FormProyect = () => {
                     onChange={ e => setClient(e.target.value)}/>
         
         </div>
-        <input type="submit" value={id ? "Update Proyect" : "Create Proyect" } className='bg-sky-600 w-full p-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors' />
+        <input type="submit" value={id ? "Update Project" : "Create Project" } className='bg-sky-600 w-full p-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors' />
     </form>
   )
 }
 
-export default FormProyect
+export default FormProject

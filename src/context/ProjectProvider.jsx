@@ -1,26 +1,31 @@
 import { useState, useEffect, createContext } from "react";
 import clientAxios from "../config/clientAxios";
 import { useNavigate } from "react-router-dom";
-import Collaborator from "../components/Collaborator";
+import useAuth from "../hooks/useAuth";
+import io from "socket.io-client";
 
-const ProyectContext = createContext();
+let socket;
 
-const ProyectProvider = ({children}) => {
+const ProjectContext = createContext();
 
-    const [proyects, setProyects] = useState([]);
+const ProjectProvider = ({children}) => {
+
+    const [projects, setProjects] = useState([]);
     const [alert, setAlert] = useState({});
-    const [proyect, setProyect] = useState({});
+    const [project, setProject] = useState({});
     const [load, setLoad] = useState(false);
     const [modalFormTask, setModalFormTask] = useState(false);
     const [modalDeleteTask, setModalDeleteTask] = useState(false);
     const [collaborator, setCollaborator] = useState({});
     const [modalDeleteCollaborator, setModalDeleteCollaborator] = useState(false);
+    const [searcher, setSearcher] = useState(false);
     const [task, setTask] = useState({})
 
     const navigate = useNavigate()
+    const {auth} = useAuth()
 
     useEffect(() => {
-        const getProyects = async () => {
+        const getProjects = async () => {
             try {
                 const token = localStorage.getItem("token")
                 if(!token) return;
@@ -31,13 +36,17 @@ const ProyectProvider = ({children}) => {
                     }
                 }
 
-                const {data} = await clientAxios("/proyects", config)
-                setProyects(data)
+                const {data} = await clientAxios("/projects", config)
+                setProjects(data)
             } catch (error) {
                 console.log(error)
             }
         }
-        getProyects()
+        getProjects()
+    }, [auth])
+
+    useEffect(() => {
+        socket = io(import.meta.env.VITE_BACKEND_URL)
     }, [])
 
     const showAlert = alert => {
@@ -48,16 +57,16 @@ const ProyectProvider = ({children}) => {
         }, 5000);
     }
 
-    const submitProyect = async proyect => {
-        if(proyect.id){
-            await editProyect(proyect)
+    const submitProject = async project => {
+        if(project.id){
+            await editProject(project)
         }else {
-            await newProyect(proyect)
+            await newProject(project)
         }
 
     }
 
-    const editProyect = async proyect => {
+    const editProject = async project => {
         try {
             const token = localStorage.getItem("token")
             if(!token) return;
@@ -67,26 +76,26 @@ const ProyectProvider = ({children}) => {
                     Authorization : `Bearer ${token}`
                 }
             }
-            const { data } = await clientAxios.put(`/proyects/${proyect.id}`, proyect, config);
+            const { data } = await clientAxios.put(`/projects/${project.id}`, project, config);
             //sinc state
-            const proyectsUpdates = proyects.map(proyectState => proyectState._id === data._id ? data : proyectState)
-            setProyects(proyectsUpdates);
+            const projectsUpdates = projects.map(projectState => projectState._id === data._id ? data : projectState)
+            setProjects(projectsUpdates);
 
             //show alert
             setAlert({
-                msg: "Proyect update successfully",
+                msg: "Project update successfully",
                 error: false
             })
             setTimeout(() => {
                 setAlert({});
-                navigate('/proyects')
+                navigate('/projects')
             }, 3000);
         } catch (error) {
             console.log(error)
         }
     }
 
-    const newProyect = async proyect => {
+    const newProject = async project => {
         try {
             const token = localStorage.getItem("token")
             if(!token) return;
@@ -96,23 +105,23 @@ const ProyectProvider = ({children}) => {
                     Authorization : `Bearer ${token}`
                 }
             }
-            const { data } = await clientAxios.post("/proyects", proyect, config);
-            setProyects([...proyects, data]);
+            const { data } = await clientAxios.post("/projects", project, config);
+            setProjects([...projects, data]);
 
             setAlert({
-                msg: "Proyect saved successfully",
+                msg: "Project saved successfully",
                 error: false
             })
             setTimeout(() => {
                 setAlert({});
-                navigate('/proyects')
+                navigate('/projects')
             }, 3000);
         } catch (error) {
             console.log(error)
         }
     }
 
-    const getProyect = async id => {
+    const getProject = async id => {
         setLoad(true);
         try {
             const token = localStorage.getItem("token")
@@ -123,19 +132,23 @@ const ProyectProvider = ({children}) => {
                     Authorization : `Bearer ${token}`
                 }
             }
-            const {data} = await clientAxios(`/proyects/${id}`, config)
-            setProyect(data)
+            const {data} = await clientAxios(`/projects/${id}`, config)
+            setProject(data)
         } catch (error) {
+            navigate('/projects')
             setAlert({
                 msg: error.response.data.msg,
                 error: true
             })
+            setTimeout(() => {
+                setAlert({})
+            }, 3000);
         }finally{
             setLoad(false);
         }
     }
 
-    const deleteProyect = async id => {
+    const deleteProject = async id => {
         try {
             const token = localStorage.getItem("token")
             if(!token) return;
@@ -145,17 +158,17 @@ const ProyectProvider = ({children}) => {
                     Authorization : `Bearer ${token}`
                 }
             }
-            const {data} = await clientAxios.delete(`/proyects/${id}`, config)
+            const {data} = await clientAxios.delete(`/projects/${id}`, config)
             //sincro state
-            const proyectsUpdate = proyects.filter(proyectState => proyectState._id !== id)
-            setProyects(proyectsUpdate)
+            const projectsUpdate = projects.filter(projectState => projectState._id !== id)
+            setProjects(projectsUpdate)
             setAlert({
-                msg: "Proyect delete successfully",
+                msg: "Project delete successfully",
                 error: false
             })
             setTimeout(() => {
                 setAlert({});
-                navigate('/proyects')
+                navigate('/projects')
             }, 3000);
         } catch (error) {
             console.log(error)
@@ -185,12 +198,16 @@ const ProyectProvider = ({children}) => {
                     }
                 }
                 const {data} = await clientAxios.post('/tasks', task, config)
-                //add task of state
-                const proyectUpdate = {...proyect}
-                proyectUpdate.tasks = [...proyect.tasks, data]
-                setProyect(proyectUpdate)
+                
+                //add task of state, now, it will be added to socket io
+                //const projectUpdate = {...project}
+                //projectUpdate.tasks = [...project.tasks, data]
+                //setProject(projectUpdate)
                 setAlert({})
                 setModalFormTask(false)
+
+                //Socket IO
+                socket.emit('new task', data)
        } catch (error) {
         console.log(error)
        }
@@ -207,13 +224,12 @@ const ProyectProvider = ({children}) => {
                 }
                 const {data} = await clientAxios.put(`/tasks/${task.id}`, task, config)
 
-                //add task of state
-                const proyectUpdate = {...proyect}
-                proyectUpdate.tasks = proyectUpdate.tasks.map( taskState => 
-                taskState._id === data._id ? data : taskState )
-                setProyect(proyectUpdate)
+
                 setAlert({})
                 setModalFormTask(false)
+
+                //socket
+                socket.emit('update task', data)
        } catch (error) {
         console.log(error)
        }
@@ -241,17 +257,17 @@ const ProyectProvider = ({children}) => {
                     msg: data.msg,
                     error: false
                 })
-                //delete task
-                const proyectUpdate = {...proyect}
-                proyectUpdate.tasks = proyectUpdate.tasks.filter( taskState => 
-                taskState._id !== task._id)
-                setProyect(proyectUpdate)
                 
                 setModalDeleteTask(false)
+                
+                //socket
+                socket.emit('delete Task', task)
+
                 setTask({})
                 setTimeout(() => {
                     setAlert({})
                 }, 4000);
+
        } catch (error) {
         console.log(error)
        }
@@ -268,7 +284,7 @@ const ProyectProvider = ({children}) => {
                         Authorization : `Bearer ${token}`
                     }
                 }
-                const data = await clientAxios.post(`/proyects/collaborators`, {email}, config)
+                const data = await clientAxios.post(`/projects/collaborators`, {email}, config)
                 setCollaborator(data)
                 setAlert({})
         } catch (error) {
@@ -291,15 +307,13 @@ const ProyectProvider = ({children}) => {
                         Authorization : `Bearer ${token}`
                     }
                 }
-                const {data} = await clientAxios.post(`/proyects/collaborators/${proyect._id}`, email, config)
+                const {data} = await clientAxios.post(`/projects/collaborators/${project._id}`, email, config)
                 setAlert({
                     msg: data.msg,
                     error: false
                 })
                 setCollaborator({})
-                setTimeout(() => {
-                    setAlert({})
-                }, 4000);
+                setAlert({})
         } catch (error) {
             setAlert({
                 msg: error.response.data.msg,
@@ -321,13 +335,13 @@ const ProyectProvider = ({children}) => {
                         Authorization : `Bearer ${token}`
                     }
                 }
-                const {data} = await clientAxios.post(`/proyects/delete-collaborator/${proyect._id}`, {id: collaborator._id}, config)
+                const {data} = await clientAxios.post(`/projects/delete-collaborator/${project._id}`, {id: collaborator._id}, config)
 
-                const proyectUpdate = {...proyect}
+                const projectUpdate = {...project}
 
-                proyectUpdate.collaborators = proyectUpdate.collaborators.filter(collaboratorState => collaboratorState._id !== collaborator._id)
+                projectUpdate.collaborators = projectUpdate.collaborators.filter(collaboratorState => collaboratorState._id !== collaborator._id)
 
-                setProyect(proyectUpdate)
+                setProject(projectUpdate)
 
                 setAlert({
                     msg: data.msg,
@@ -336,9 +350,9 @@ const ProyectProvider = ({children}) => {
                 setCollaborator({})
                 setModalDeleteCollaborator(false)
 
-                setTimeout(() => {
+                setTimeout(() =>{
                     setAlert({})
-                }, 4000);
+                }, 4000)
 
                  }catch (error) {
                     setAlert({
@@ -347,17 +361,76 @@ const ProyectProvider = ({children}) => {
                     })
                 }
     }
+
+    const completeTask = async id => {
+        try {
+            const token = localStorage.getItem("token")
+            if(!token) return;
+                const config = {
+                    headers: {
+                        "Content-Type" : "application/json",
+                        Authorization : `Bearer ${token}`
+                    }
+                }
+                const {data} = await clientAxios.post(`/tasks/state/${id}`, {}, config)
+
+                    setTask({})
+                    setAlert({})
+                    //socket
+                    socket.emit('change state', data)
+        } catch (error) {
+            console.log(error.response)
+        }
+    }
+
+    const handleSearcher = () => {
+        setSearcher(!searcher)
+    }
+
+    //socket io
+    const submitTaskSProject = (task) => {
+        //add task of state
+        const projectUpdate = {...project}
+        projectUpdate.tasks = [...project.tasks, task]
+        setProject(projectUpdate)
+    }
+    const deleteTaskSProject = task => {
+        //delete task
+        const projectUpdate = {...project}
+        projectUpdate.tasks = projectUpdate.tasks.filter( taskState => 
+        taskState._id !== task._id)
+        setProject(projectUpdate)
+    }
+    const editTaskSProject = task => {
+        //add task of state
+        const projectUpdate = {...project}
+        projectUpdate.tasks = projectUpdate.tasks.map( taskState => 
+        taskState._id === task._id ? task : taskState )
+        setProject(projectUpdate)
+    }
+    const changeTaskSProject = task => {
+        //change task of state
+        const projectUpdate = {... project}
+        projectUpdate.tasks = projectUpdate.tasks.map( taskState => 
+            taskState._id === task._id ? task : taskState)
+            setProject(projectUpdate)
+    }
+    const logoutProjects = () => {
+        setProjects([])
+        setProject({})
+        setAlert({})
+    }
     return (
-        <ProyectContext.Provider
+        <ProjectContext.Provider
         value={{
-            proyects,
+            projects,
             showAlert,
             alert,
-            submitProyect,
-            getProyect,
-            proyect,
+            submitProject,
+            getProject,
+            project,
             load,
-            deleteProyect,
+            deleteProject,
             modalFormTask,
             handleModalTask,
             submitTask,
@@ -371,14 +444,23 @@ const ProyectProvider = ({children}) => {
             addCollaborator,
             handleModalDeleteCollaborator,
             modalDeleteCollaborator,
-            deleteCollaborator
-
+            deleteCollaborator,
+            completeTask,
+            handleSearcher,
+            searcher,
+            submitTaskSProject,
+            deleteTaskSProject,
+            editTaskSProject,
+            changeTaskSProject,
+            logoutProjects,
         }}>
+
             {children}
-        </ProyectContext.Provider>
+
+        </ProjectContext.Provider>
     )
 }
 export {
-    ProyectProvider
+    ProjectProvider
 }
-export default ProyectContext;
+export default ProjectContext;

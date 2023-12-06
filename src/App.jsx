@@ -5,13 +5,13 @@ import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword'
 import NewPassword from './pages/NewPassword'
 import ConfirmCount from './pages/ConfirmCount'
-import Proyects from './pages/Proyects'
-import NewProyect from './pages/NewProyect'
+import Projects from './pages/Projects'
+import NewProject from './pages/NewProject'
 import ProtectedRoute from './layouts/protectedRoute'
-import Proyect from './pages/Proyect'
-import EditProyect from './pages/EditProyect'
+import Project from './pages/Project'
+import EditProject from './pages/EditProject'
 import { AuthProvider } from './context/AuthProvider'
-import { ProyectProvider } from './context/ProyectProvider'
+import { ProjectProvider } from './context/ProjectProvider'
 import NewCollaborator from './pages/NewCollaborator'
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <ProyectProvider>
+        <ProjectProvider>
               <Routes>
                 <Route path='/' element={<AuthLayout/>}>
                   <Route index element={<Login/>}/>
@@ -30,16 +30,16 @@ function App() {
                   <Route  path='confirm/:id' element={<ConfirmCount/>}/>
                 </Route>
 
-                <Route path='/proyects' element={<ProtectedRoute/>}>
-                    <Route index element={<Proyects/>} />
-                    <Route path="create-proyect" element={<NewProyect/>} />
+                <Route path='/projects' element={<ProtectedRoute/>}>
+                    <Route index element={<Projects/>} />
+                    <Route path="create-project" element={<NewProject/>} />
                     <Route path="new-collaborator/:id" element={<NewCollaborator/>} />
-                    <Route path=":id" element={<Proyect/>} />
-                    <Route path="edit/:id" element={<EditProyect/>} />
+                    <Route path=":id" element={<Project/>} />
+                    <Route path="edit/:id" element={<EditProject/>} />
                 </Route>
 
               </Routes>
-          </ProyectProvider>
+          </ProjectProvider>
       </AuthProvider>
     </BrowserRouter>
   )

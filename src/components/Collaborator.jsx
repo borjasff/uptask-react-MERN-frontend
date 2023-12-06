@@ -1,6 +1,6 @@
-import useProyects from "../hooks/useProyects";
+import useProjects from "../hooks/useProjects";
 const Collaborator = ({collaborator}) => {
-    const { handleModalDeleteCollaborator} = useProyects()
+    const { handleModalDeleteCollaborator} = useProjects()
     const { name, email} = collaborator;
   return (
     <div className="border-b p-5 flex justify-between items-center">

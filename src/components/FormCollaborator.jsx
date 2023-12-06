@@ -1,11 +1,11 @@
 import { useState } from "react"
-import useProyects from "../hooks/useProyects"
+import useProjects from "../hooks/useProjects"
 import Alert from "./Alert"
 
 const FormCollaborator = () => {
     const[email, setEmail] = useState("")
 
-    const { alert, showAlert, submitCollaborator} = useProyects();
+    const { alert, showAlert, submitCollaborator} = useProjects();
 
     const handleSubmit = e => {
         e.preventDefault();
@@ -22,7 +22,7 @@ const FormCollaborator = () => {
   return (
     <form
         onSubmit={handleSubmit}
-        className="bg-white py-10 px-5 md:1/2 rounded-lg shadow">
+        className="bg-white py-10 px-5 md:w-1/2 w-full rounded-lg shadow">
         <div className='mb-5'>
             {msg && <Alert alert={alert} />}
             <label htmlFor='email' className='text-gray-700 uppercase font-bold text-sm'>

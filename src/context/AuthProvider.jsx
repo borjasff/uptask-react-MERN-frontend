@@ -1,5 +1,5 @@
 import { useEffect, useState, createContext } from "react";
-import { useNavigate} from "react-router-dom"
+//import { useNavigate} from "react-router-dom"
 import clientAxios from "../config/clientAxios";
 
 const AuthContext = createContext();
@@ -29,7 +29,7 @@ const AuthProvider = ({children}) => {
                     const { data} = await clientAxios('/users/profile', config);
 
                     setAuth(data);
-                    //navigate("/proyects");
+                    //navigate("/projects");
                     
                 } catch (error) {
                     console.log(error);
@@ -41,12 +41,16 @@ const AuthProvider = ({children}) => {
         verifyUser();
     }, [])
 
+    const logoutAuth = () => {
+        setAuth({})
+    }
     return (
         <AuthContext.Provider
             value={{
                     auth,
                     setAuth,
-                    charged
+                    charged,
+                    logoutAuth
                 }}
         >
             {children}

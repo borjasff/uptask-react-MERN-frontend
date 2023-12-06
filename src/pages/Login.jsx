@@ -30,7 +30,7 @@ export default function Login() {
       setAlert({})
       localStorage.setItem('token', data.token)
       setAuth(data);
-      navigate("/proyects")
+      navigate("/projects")
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,
@@ -42,7 +42,7 @@ export default function Login() {
 
   return (
     <>
-        <h1 className="text-sky-600 font-black text-6xl capitalize">Login and manage your {''} <span className="text-slate-700">proyects</span> </h1>
+        <h1 className="text-sky-600 font-black text-6xl capitalize">Login and manage your {''} <span className="text-slate-700">projects</span> </h1>
 
         {msg && <Alert alert={alert} />}
 
