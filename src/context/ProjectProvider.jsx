@@ -24,6 +24,7 @@ const ProjectProvider = ({children}) => {
     const navigate = useNavigate()
     const {auth} = useAuth()
 
+    //get projects every call auth
     useEffect(() => {
         const getProjects = async () => {
             try {
@@ -45,10 +46,12 @@ const ProjectProvider = ({children}) => {
         getProjects()
     }, [auth])
 
+    //use Socket io
     useEffect(() => {
         socket = io(import.meta.env.VITE_BACKEND_URL)
     }, [])
 
+    //to show alert
     const showAlert = alert => {
         setAlert(alert);
 
@@ -56,7 +59,7 @@ const ProjectProvider = ({children}) => {
             setAlert({});
         }, 5000);
     }
-
+    // call edit or new project
     const submitProject = async project => {
         if(project.id){
             await editProject(project)
@@ -65,9 +68,10 @@ const ProjectProvider = ({children}) => {
         }
 
     }
-
+    //edit
     const editProject = async project => {
         try {
+            //verify token
             const token = localStorage.getItem("token")
             if(!token) return;
             const config = {
@@ -76,6 +80,7 @@ const ProjectProvider = ({children}) => {
                     Authorization : `Bearer ${token}`
                 }
             }
+            //send info
             const { data } = await clientAxios.put(`/projects/${project.id}`, project, config);
             //sinc state
             const projectsUpdates = projects.map(projectState => projectState._id === data._id ? data : projectState)
@@ -94,7 +99,7 @@ const ProjectProvider = ({children}) => {
             console.log(error)
         }
     }
-
+    //new project
     const newProject = async project => {
         try {
             const token = localStorage.getItem("token")

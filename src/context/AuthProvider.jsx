@@ -10,6 +10,7 @@ const AuthProvider = ({children}) => {
 
 
     useEffect(() =>{
+        //to verify user
         const verifyUser = async () => {
                 const token = localStorage.getItem('token');
             if(!token){
@@ -17,7 +18,7 @@ const AuthProvider = ({children}) => {
                 return
             }
             else{
-
+                //config user
                 const config = {
                     headers: {
                         "Content-Type": "application/json",
@@ -26,6 +27,7 @@ const AuthProvider = ({children}) => {
                 }
 
                 try {
+                    
                     const { data} = await clientAxios('/users/profile', config);
 
                     setAuth(data);

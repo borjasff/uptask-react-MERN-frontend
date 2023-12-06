@@ -9,6 +9,7 @@ const Header = () => {
   const { logoutAuth } = useAuth()
 
   const handleLogout = () => {
+    //logout
     logoutAuth()
     logoutProjects()
     localStorage.removeItem('token')

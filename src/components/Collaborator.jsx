@@ -1,6 +1,8 @@
 import useProjects from "../hooks/useProjects";
 const Collaborator = ({collaborator}) => {
+  // to delete collaborator
     const { handleModalDeleteCollaborator} = useProjects()
+    //and show the collaborator
     const { name, email} = collaborator;
   return (
     <div className="border-b p-5 flex justify-between items-center">

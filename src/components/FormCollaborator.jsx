@@ -7,6 +7,7 @@ const FormCollaborator = () => {
 
     const { alert, showAlert, submitCollaborator} = useProjects();
 
+    //when send the form, verify that email is valid
     const handleSubmit = e => {
         e.preventDefault();
         if(email === ""){

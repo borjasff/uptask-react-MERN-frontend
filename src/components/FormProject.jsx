@@ -14,6 +14,7 @@ const FormProject = () => {
     const {showAlert, alert, submitProject, project} = useProjects()
 
     useEffect(() => {
+        //send data to state while params changed
         if(params.id){
             setId(project._id)
             setName(project.name)

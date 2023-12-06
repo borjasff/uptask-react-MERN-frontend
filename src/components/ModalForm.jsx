@@ -18,6 +18,7 @@ const ModalFormTarea = () => {
     const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } =useProjects();
 
     useEffect(() => {
+        //save task if it has info 
         if(task._id){
             setId(task._id)
             setName(task.name)

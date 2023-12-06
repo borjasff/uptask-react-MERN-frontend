@@ -9,7 +9,7 @@ function classNames(...classes) {
 const Busqueda = () => {
     const [ search, setSearch] = useState('')
     const { searcher, handleSearcher, projects } = useProjects()
-
+// IF project is not specified return [] else filter name project
     const projectsFilters = search === '' ? [] : projects.filter(project => project.name.toLowerCase().includes(search.toLowerCase()))
     
     return (
